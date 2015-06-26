@@ -1,0 +1,21 @@
+{
+  "name": "spark-hello-world",
+  "version": "1.0.0",
+  "authors": [
+    "Patrick Grimard <pgrimard@gmail.com>"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "react": "~0.13.3"
+  }
+}

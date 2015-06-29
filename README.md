@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/pgrimard/spark-react-es6.svg?style=svg)](https://circleci.com/gh/pgrimard/spark-react-es6)
+
 # Spark React ES6
 
 ## Why Spark?

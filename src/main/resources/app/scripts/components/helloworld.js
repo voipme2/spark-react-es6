@@ -1,4 +1,4 @@
-import React from 'react/dist/react.min.js';
+import React from 'react';
 
 export default class HelloWorld extends React.Component {
   render() {

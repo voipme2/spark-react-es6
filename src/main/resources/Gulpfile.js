@@ -72,5 +72,4 @@ function getNPMPackageIds() {
     // does not have a package.json manifest
   }
   return Object.keys(packageManifest.dependencies) || [];
-
 }

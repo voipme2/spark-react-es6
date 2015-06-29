@@ -3,22 +3,32 @@ var uglify = require('gulp-uglify');
 var streamify = require('gulp-streamify');
 var rename = require('gulp-rename');
 var gulpif = require('gulp-if');
+var rev = require('gulp-rev');
+var inject = require('gulp-inject');
 
 var browserify = require('browserify');
 var babelify = require('babelify');
 var del = require('del');
 var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 var resolve = require('resolve');
+var series = require('stream-series');
 
 var production = (process.env.NODE_ENV === 'production');
 
-gulp.task('default', ['clean', 'vendor', 'scripts'], function() {
-  gulp.src('./app/index.html')
-    .pipe(gulp.dest('public'));
-});
+gulp.task('default', ['clean', 'inject'], function() {});
 
 gulp.task('clean', function(cb) {
-  return del(['public'], cb);
+  return del(['./public'], cb);
+});
+
+gulp.task('inject', ['vendor', 'scripts'], function() {
+  var vendor = gulp.src('./public/scripts/vendor**.js', {read: false});
+  var scripts = gulp.src('./public/scripts/scripts*.js', {read: false});
+
+  gulp.src('./app/index.html')
+    .pipe(inject(series(vendor, scripts), {ignorePath: '/public'}))
+    .pipe(gulp.dest('./public'));
 });
 
 gulp.task('vendor', function() {
@@ -31,6 +41,8 @@ gulp.task('vendor', function() {
   return b.bundle().pipe(source('vendor.js'))
     .pipe(gulpif(production, streamify(uglify())))
     .pipe(rename('vendor.min.js'))
+    .pipe(buffer())
+    .pipe(rev())
     .pipe(gulp.dest('./public/scripts'));
 });
 
@@ -46,6 +58,8 @@ gulp.task('scripts', function() {
   return b.bundle().pipe(source('scripts.js'))
     .pipe(gulpif(production, streamify(uglify())))
     .pipe(rename('scripts.min.js'))
+    .pipe(buffer())
+    .pipe(rev())
     .pipe(gulp.dest('./public/scripts'));
 });
 

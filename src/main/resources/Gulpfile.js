@@ -23,7 +23,7 @@ gulp.task('clean', function(cb) {
 });
 
 gulp.task('inject', ['vendor', 'scripts'], function() {
-  var vendor = gulp.src('./public/scripts/vendor**.js', {read: false});
+  var vendor = gulp.src('./public/scripts/vendor*.js', {read: false});
   var scripts = gulp.src('./public/scripts/scripts*.js', {read: false});
 
   gulp.src('./app/index.html')
@@ -38,12 +38,7 @@ gulp.task('vendor', function() {
     b.require(resolve.sync(id), {expose: id});
   });
 
-  return b.bundle().pipe(source('vendor.js'))
-    .pipe(gulpif(production, streamify(uglify())))
-    .pipe(rename('vendor.min.js'))
-    .pipe(buffer())
-    .pipe(rev())
-    .pipe(gulp.dest('./public/scripts'));
+  return bundle('vendor.js', b);
 });
 
 gulp.task('scripts', function() {
@@ -55,13 +50,17 @@ gulp.task('scripts', function() {
     b.external(id);
   });
 
-  return b.bundle().pipe(source('scripts.js'))
+  return bundle('scripts.js', b);
+});
+
+function bundle(name, b) {
+  return b.bundle().pipe(source(name))
     .pipe(gulpif(production, streamify(uglify())))
-    .pipe(rename('scripts.min.js'))
+    .pipe(rename(name.substring(0, name.lastIndexOf('.js')) + '.min.js'))
     .pipe(buffer())
     .pipe(rev())
     .pipe(gulp.dest('./public/scripts'));
-});
+}
 
 function getNPMPackageIds() {
   // read package.json and get dependencies' package ids
